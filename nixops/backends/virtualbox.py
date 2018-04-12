@@ -124,7 +124,7 @@ class VirtualBoxState(MachineState):
 
     def _start(self):
         self._logged_exec(
-            ["VBoxManage", "guestproperty", "set", self.vm_id, "/VirtualBox/GuestInfo/Net/1/V4/IP", ''])
+            ["VBoxManage", "guestproperty", "set", self.vm_id, "/VirtualBox/GuestInfo/Net/0/V4/IP", ''])
 
         self._logged_exec(
             ["VBoxManage", "guestproperty", "set", self.vm_id, "/VirtualBox/GuestInfo/Charon/ClientPublicKey", self._client_public_key])
@@ -137,7 +137,7 @@ class VirtualBoxState(MachineState):
 
     def _update_ip(self):
         res = self._logged_exec(
-            ["VBoxManage", "guestproperty", "get", self.vm_id, "/VirtualBox/GuestInfo/Net/1/V4/IP"],
+            ["VBoxManage", "guestproperty", "get", self.vm_id, "/VirtualBox/GuestInfo/Net/0/V4/IP"],
             capture_stdout=True).rstrip()
         if res[0:7] != "Value: ": return
         new_address = res[7:]
@@ -352,8 +352,9 @@ class VirtualBoxState(MachineState):
                  "--vram", "10",
                  "--nictype1", "virtio",
                  "--nictype2", "virtio",
-                 "--nic2", "hostonly",
-                 "--hostonlyadapter2", "vboxnet0",
+                 "--nic1", "hostonly",
+                 "--hostonlyadapter1", "vboxnet0",
+                 "--nic2", "nat",
                  "--nestedpaging", "off",
                  "--paravirtprovider", "kvm"
             ]
